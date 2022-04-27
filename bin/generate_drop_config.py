@@ -25,9 +25,9 @@ def read_config():
             # specify which gene annotations to include and which
             # groups to exclude when exporting counts
             geneAnnotations:
-            - null
+            - v37
             excludeGroups:
-            - null
+            - outrider
         genome: # path to genome sequence in fasta format.
             # You can define multiple reference genomes in yaml format, ncbi: path_to_ncbi, ucsc: path_to_ucsc
             # the keywords that define the path should be in the GENOME column of the SA table
