@@ -254,8 +254,8 @@ process generate_config4drop{
         path('*.fasta')
 
     """
-    ln -s $fasta . &&
-    ln -s $gtf . &&
+    ln -s $fasta . && ln -s $gtf . &&
+    touch $fasta && touch $gtf &&
     generate_drop_config.py \\
         --genome_fasta \$(basename $fasta) \\
         --gtf \$(basename $gtf) \\
