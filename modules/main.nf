@@ -250,12 +250,12 @@ process generate_config4drop{
     
     output:
         path('config.yaml'), emit: config_drop
-        path('*.gtf')
-        path('*.fasta')
+        path('*.gtf') optional true
+        path('*.fasta') optional true
 
     """
-    ln -s $fasta . && ln -s $gtf . &&
-    touch $fasta && touch $gtf &&
+    ln -s $fasta . &&
+    ln -s $gtf . &&
     generate_drop_config.py \\
         --genome_fasta \$(basename $fasta) \\
         --gtf \$(basename $gtf) \\
