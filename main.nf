@@ -114,27 +114,27 @@ workflow {
     generate_config4drop( params.fasta, params.gtf )
 
     // ASE subworkflow
-    // ch_indexed_bam = ch_downsample_regions ? filter_bam(ch_indexed_bam, ch_downsample_regions) : ch_indexed_bam
-    // gatk_split(ch_indexed_bam, ch_fasta, ch_fai, ch_dict)
-    // gatk_haplotypecaller(gatk_split.out, ch_fasta, ch_fai, ch_dict)
-    // bcftools_compress_and_index(gatk_haplotypecaller.out)
-    // bcftools_prep_vcf(gatk_haplotypecaller.out)
-    // gatk_asereadcounter(bcftools_prep_vcf.out, ch_indexed_bam, ch_fasta, ch_fai, ch_dict)
-    // bootstrapann(bcftools_compress_and_index.out, gatk_asereadcounter.out)
-    // vep(bootstrapann.out, ch_fasta, ch_fai, ch_vep_cache)
+    ch_indexed_bam = ch_downsample_regions ? filter_bam(ch_indexed_bam, ch_downsample_regions) : ch_indexed_bam
+    gatk_split(ch_indexed_bam, ch_fasta, ch_fai, ch_dict)
+    gatk_haplotypecaller(gatk_split.out, ch_fasta, ch_fai, ch_dict)
+    bcftools_compress_and_index(gatk_haplotypecaller.out)
+    bcftools_prep_vcf(gatk_haplotypecaller.out)
+    gatk_asereadcounter(bcftools_prep_vcf.out, ch_indexed_bam, ch_fasta, ch_fai, ch_dict)
+    bootstrapann(bcftools_compress_and_index.out, gatk_asereadcounter.out)
+    vep(bootstrapann.out, ch_fasta, ch_fai, ch_vep_cache)
     /* TODO: pass the bootstrapann vcf file to recompress and index in the case when
         we don't run VEP. Also the multiqc part will need to be fixed
     */
-    // recompress_and_index_vcf(vep.out.vcf)
+    recompress_and_index_vcf(vep.out.vcf)
 
     // Combine metric output files to one channel for multiqc
-    // ch_multiqc_input = ch_reads.map{ it.first() }
-    // ch_multiqc_input = ch_multiqc_input.join(fastqc.out.zip)
-    // ch_multiqc_input = ch_multiqc_input.join(trim_galore.out.report)
-    // ch_multiqc_input = ch_multiqc_input.join(STAR_Aln.out.star_multiqc)
-    // ch_multiqc_input = ch_multiqc_input.join(picard_collectrnaseqmetrics.out)
-    // ch_multiqc_input = ch_multiqc_input.join(gffcompare.out.multiqc)
-    // ch_multiqc_input = ch_multiqc_input.join(vep.out.html)
-    // ch_multiqc_input = ch_multiqc_input.collect{it[1..-1]}
-    // multiqc(ch_multiqc_input)
+    ch_multiqc_input = ch_reads.map{ it.first() }
+    ch_multiqc_input = ch_multiqc_input.join(fastqc.out.zip)
+    ch_multiqc_input = ch_multiqc_input.join(trim_galore.out.report)
+    ch_multiqc_input = ch_multiqc_input.join(STAR_Aln.out.star_multiqc)
+    ch_multiqc_input = ch_multiqc_input.join(picard_collectrnaseqmetrics.out)
+    ch_multiqc_input = ch_multiqc_input.join(gffcompare.out.multiqc)
+    ch_multiqc_input = ch_multiqc_input.join(vep.out.html)
+    ch_multiqc_input = ch_multiqc_input.collect{it[1..-1]}
+    multiqc(ch_multiqc_input)
 }
